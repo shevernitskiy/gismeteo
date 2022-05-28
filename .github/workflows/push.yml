@@ -31,7 +31,8 @@ jobs:
           echo "iscode=false" >> $GITHUB_ENV
           for changed_file in ${{ steps.files.outputs.all }}; do
             echo "changed file ${changed_file}"
-            if [${changed_file##*.} == 'ts' || ${changed_file##*.} == 'js' || ${changed_file##*.} == 'json']; then
+            if [[${changed_file##*.} == 'ts']] || [[${changed_file##*.} == 'js']] || [[${changed_file##*.} == 'json']]
+            then
               echo "iscode=true" >> $GITHUB_ENV
             fi
           done
