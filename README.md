@@ -12,6 +12,14 @@
   </i>
 </p>
 
+<div align="center">
+
+[![build](https://img.shields.io/github/workflow/status/shevernitskiy/gismeteo/CI%20Push)](https://github.com/shevernitskiy/gismeteo/actions)
+[![downloads](https://img.shields.io/npm/dm/gismeteo)](https://www.npmjs.com/package/gismeteo)
+[![size](https://img.shields.io/npm/v/gismeteo)](https://www.npmjs.com/package/gismeteo)
+
+</div>
+
 ## Installation
 
 ```bash
