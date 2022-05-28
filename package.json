@@ -28,7 +28,8 @@
     "prepare": "rollup -c",
     "lint": "eslint . --ext .ts",
     "test": "jest gismeteo.test.ts",
-    "playground": "jest playground.test.ts"
+    "playground": "jest playground.test.ts",
+    "release": "np patch"
   },
   "dependencies": {
     "axios": "^0.27.2",
