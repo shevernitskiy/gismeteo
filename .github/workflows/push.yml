@@ -24,7 +24,7 @@ jobs:
       - name: Checking changed files
         shell: bash
         run: |
-          files=$(git diff-tree --no-commit-id --name-only -r ${{ GITHUB_SHA }})
+          files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
           for changed_file in $files; do
             echo "changed ${changed_file}"
             if [[("${changed_file##*.}" = "ts") || ("${changed_file##*.}" = "js")]]
