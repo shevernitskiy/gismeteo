@@ -6,7 +6,11 @@
 
 </div>
 
-This little library provides data from the gismeteo site using web scraping.
+<p align=center>
+  <i>
+    This little library provides data from the gismeteo site using web scraping.
+  </i>
+</p>
 
 ## Installation
 
@@ -553,3 +557,11 @@ gismeteo.getMonth('London').then((data) => {
 ```
 
 </details>
+
+## Contributing
+
+Pull requests are welcome. Please use prettier format for your code.
+
+## License
+
+Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License.

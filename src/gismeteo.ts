@@ -103,6 +103,11 @@ export class Gismeteo {
     })
   }
 
+  /**
+   * It takes a city name, then makes a request to the Gismeteo and returns
+   * the data
+   * @param {string} city - string - the name of the city you want to get the weather for
+   */
   public async getNow(city: string): Promise<GismeteoNow> {
     const city_uri = await this.getCityUri(city)
 
@@ -127,6 +132,12 @@ export class Gismeteo {
     })
   }
 
+  /**
+   * It takes a city name, then makes a request to the Gismeteo, parses the
+   * HTML, and returns an array of GismeteoTomorrow with the weather data
+   * @param {string} city - string - the name of the city you want to get the weather for
+   * @returns An array of GismeteoTomorrow
+   */
   public async getTommorow(city: string): Promise<GismeteoTomorrow[]> {
     const city_uri = await this.getCityUri(city)
 
