@@ -21,16 +21,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Extract changed files
-        id: files
-        uses: jitterbit/get-changed-files@v1
-
       - name: Checking changed files
         shell: bash
         run: |
-          echo "iscode=false" >> $GITHUB_ENV
-          for changed_file in ${{ steps.files.outputs.all }}; do
-            echo "changed file ${changed_file}"
+          files=$(git diff-tree --no-commit-id --name-only -r ${{ GITHUB_SHA }})
+          for changed_file in $files; do
+            echo "changed ${changed_file}"
             if [[("${changed_file##*.}" = "ts") || ("${changed_file##*.}" = "js")]]
             then
               echo "iscode=true" >> $GITHUB_ENV
