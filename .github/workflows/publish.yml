@@ -13,13 +13,13 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
 
-      - name: Install, build and test
+      - name: Install, build
         run: |
           yarn
           yarn run build
 
       - name: Increase version
-        run: yarn version
+        run: yarn version --patch
 
       - name: Commit package.json with new version
         uses: EndBug/add-and-commit@v9

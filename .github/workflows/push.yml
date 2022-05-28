@@ -21,20 +21,34 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Check changed files
+        id: files
+        uses: jitterbit/get-changed-files@v1
+      - run: |
+          echo "iscode=false" >> $GITHUB_ENV
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            echo "File ${changed_file}."
+          done
+
       - name: Use Node ${{ matrix.node }}
+        if: ${{ env.iscode == 'true' }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
 
       - name: Install deps and build (with cache)
+        if: ${{ env.iscode == 'true' }}
         run: yarn
 
       - name: Lint
+        if: ${{ env.iscode == 'true' }}
         run: yarn lint
 
       - name: Test
+        if: ${{ env.iscode == 'true' }}
         run: yarn test --ci --maxWorkers=2
 
       - name: Build
+        if: ${{ env.iscode == 'true' }}
         run: yarn build
