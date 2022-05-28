@@ -1,6 +1,6 @@
 {
   "printWidth": 140,
-  "endOfLine": "lf",
+  "endOfLine": "auto",
   "semi": false,
   "singleQuote": true,
   "quoteProps": "consistent",
