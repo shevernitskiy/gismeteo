@@ -24,7 +24,8 @@ jobs:
       - name: Check changed files
         id: files
         uses: jitterbit/get-changed-files@v1
-      - run: |
+      - shell: bash
+        run: |
           echo "iscode=false" >> $GITHUB_ENV
           for changed_file in ${{ steps.files.outputs.all }}; do
             echo "File ${changed_file}."
