@@ -1,11 +1,13 @@
 import { Gismeteo } from '../src/gismeteo'
 
+jest.setTimeout(15000)
+
 describe('Gismeteo', () => {
   const gismeteo = new Gismeteo()
 
   describe('getNow', () => {
     test('should not be null', async () => {
-      const result = await gismeteo.getNow('London')
+      const result = await gismeteo.getNow('Лондон')
 
       expect(result).not.toBeNull()
     })
