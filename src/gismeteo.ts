@@ -81,6 +81,13 @@ export class Gismeteo {
     })
   }
 
+  /**
+   * It takes a city name as a parameter, then makes a request
+   * to the Gismeteo for the month forecast, parses the HTML response, and returns the forecast as
+   * an array of GismeteoMonth
+   * @param {string} city - string - the name of the city you want to get the weather for
+   * @returns An array of GismeteoMonth
+   */
   public async getMonth(city: string): Promise<GismeteoMonth[]> {
     const city_uri = await this.getCityUri(city)
 
