@@ -1,0 +1,5 @@
+node_modules
+lib
+*.log
+yarn.lock
+test/playground.test.ts

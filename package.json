@@ -1,0 +1,51 @@
+{
+  "name": "gismeteo",
+  "version": "1.0.0",
+  "main": "lib/gismeteo.js",
+  "typings": "lib/gismeteo.d.ts",
+  "module": "lib/gismeteo.esm.js",
+  "files": [
+    "lib",
+    "package.json"
+  ],
+  "license": "MIT",
+  "author": "sheverniskiy",
+  "description": "Gismeteo weather (unofficial)",
+  "keywords": [
+    "gismeteo",
+    "weather",
+    "parser",
+    "scraper"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
+    "lint": "eslint . --ext .ts",
+    "test": "jest gismeteo.test.ts",
+    "playground": "jest playground.test.ts"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cheerio": "^1.0.0-rc.11",
+    "is-number": "^7.0.0",
+    "moment": "^2.29.3",
+    "tslib": "~2.3.1",
+    "user-agents": "^1.0.1027"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.35",
+    "@types/user-agents": "^1.0.2",
+    "@types/is-number": "^7.0.3",
+    "@types/jest": "~27.4",
+    "@typescript-eslint/eslint-plugin": "~5.14",
+    "@typescript-eslint/parser": "~5.14",
+    "eslint": "~8.11",
+    "eslint-config-prettier": "~8.5",
+    "eslint-plugin-jest": "~26.1",
+    "jest": "^28.1.0",
+    "rollup": "^2.75.0",
+    "rollup-plugin-typescript2": "^0.31.2",
+    "ts-jest": "^28.0.3",
+    "typescript": "^4.7.2"
+  }
+}
