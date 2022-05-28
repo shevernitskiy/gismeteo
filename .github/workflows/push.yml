@@ -24,11 +24,16 @@ jobs:
       - name: Check changed files
         id: files
         uses: jitterbit/get-changed-files@v1
-      - shell: bash
+
+      - name: Checking changed files
+        shell: bash
         run: |
           echo "iscode=false" >> $GITHUB_ENV
           for changed_file in ${{ steps.files.outputs.all }}; do
-            echo "File ${changed_file}."
+            echo "changed file ${changed_file}"
+            if (${changed_file##*.} == 'ts' || ${changed_file##*.} == 'js' || ${changed_file##*.} == 'json')
+              echo "iscode=true" >> $GITHUB_ENV
+            fi
           done
 
       - name: Use Node ${{ matrix.node }}
