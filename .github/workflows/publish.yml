@@ -1,8 +1,7 @@
 name: CI Publish
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -13,9 +12,22 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: yarn
-      - run: yarn run build
-      - run: yarn run test
-      - run: yarn publish --access public
+
+      - name: Install, build and test
+        run: |
+          yarn
+          yarn run build
+          yarn run test
+
+      - name: Increase version
+        run: yarn version
+
+      - name: Commit package.json with new version
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'publish new version'
+
+      - name: Publish
+        run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
