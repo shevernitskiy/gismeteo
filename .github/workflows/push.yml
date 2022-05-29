@@ -28,7 +28,6 @@ jobs:
           files: |
             **/*.ts
             **/*.js
-            **/*.yml
 
       - name: Use Node ${{ matrix.node }}
         if: steps.changed-files.outputs.only_changed == 'true'
