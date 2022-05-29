@@ -28,17 +28,18 @@ jobs:
           files: |
             *.ts
             *.js
+            *.yml
 
       - name: Checking changed files
         shell: bash
         run: |
-          iscode=false
-          echo "iscode=$iscode" >> $GITHUB_ENV
+          ISCODE=false
           for changed_file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            iscode=true
-            echo "iscode=$iscode" >> $GITHUB_ENV
+            ISCODE=true
           done
-          echo "result: ${{ env.iscode }}"
+          echo "ISCODE=$ISCODE" >> $GITHUB_ENV
+          echo "result: $ISCODE"
+          echo "env: ${{ env.ISCODE }}"
 
       - name: Use Node ${{ matrix.node }}
         if: ${{ env.iscode == 'true' }}
