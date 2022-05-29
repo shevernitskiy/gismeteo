@@ -20,6 +20,10 @@ export class Gismeteo {
       'user-agent': new UserAgent().toString(),
     },
   }
+  private _city_cache = {
+    city: '',
+    city_uri: '' as CityUri,
+  }
 
   constructor(options?: GismeteoOptions) {
     this._base_url = options?.lang === 'en' ? Endpoint.BASE_EN : Endpoint.BASE_RU
@@ -183,9 +187,17 @@ export class Gismeteo {
   }
 
   private async getCityUri(city: string): Promise<CityUri> {
+    if (city === this._city_cache.city) {
+      return Promise.resolve(this._city_cache.city_uri)
+    }
+
     return axios.get(`${Endpoint.SEARCH}${encodeURIComponent(city)}/9/`, this._axios_config).then(({ data }) => {
       if (data.data.length === 0 || data.data[0]?.url === undefined) {
         throw new GismeteoCityError('Unable to find uri for given city name')
+      }
+      this._city_cache = {
+        city: city,
+        city_uri: data.data[0].url,
       }
       return data.data[0].url
     })

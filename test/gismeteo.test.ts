@@ -25,7 +25,7 @@ describe('Gismeteo', () => {
 
   describe('getTwoWeeks', () => {
     test('should not be null and contain 14 items', async () => {
-      const result = await gismeteo.getTwoWeeks('Москва')
+      const result = await gismeteo.getTwoWeeks('Moscow')
 
       expect(result).not.toBeNull()
       expect(result.length).toBe(14)
