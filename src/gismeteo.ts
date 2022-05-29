@@ -216,7 +216,7 @@ export class Gismeteo {
     const out: T[] = []
 
     for (let i = 0; i < search.length; i++) {
-      out.push({ dt: start_date.add(i, 'days').unix() } as unknown as T)
+      out.push({ dt: start_date.add(i > 0 ? 1 : 0, 'day').unix() } as unknown as T)
     }
 
     return out
