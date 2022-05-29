@@ -26,6 +26,8 @@ jobs:
         run: |
           echo "iscode=false" >> $GITHUB_ENV
           files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+          echo "commit files:"
+          echo "${files}"
           for changed_file in $files; do
             echo "changed ${changed_file}"
             if [[("${changed_file##*.}" = "ts") || ("${changed_file##*.}" = "js")]]
@@ -33,6 +35,7 @@ jobs:
               echo "iscode=true" >> $GITHUB_ENV
             fi
           done
+          echo "Result: ${{ env.iscode }}"
 
       - name: Use Node ${{ matrix.node }}
         if: ${{ env.iscode == 'true' }}
