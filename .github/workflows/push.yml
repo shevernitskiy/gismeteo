@@ -30,36 +30,25 @@ jobs:
             **/*.js
             **/*.yml
 
-      - name: Checking changed files
-        shell: bash
-        run: |
-          ISCODE=false
-          for changed_file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            ISCODE=true
-          done
-          echo "ISCODE=$ISCODE" >> $GITHUB_ENV
-          echo "result: $ISCODE"
-          echo "env: ${{ env.ISCODE }}"
-
       - name: Use Node ${{ matrix.node }}
-        if: ${{ env.iscode == 'true' }}
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
 
       - name: Install deps and build (with cache)
-        if: ${{ env.iscode == 'true' }}
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: yarn
 
       - name: Lint
-        if: ${{ env.iscode == 'true' }}
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: yarn lint
 
       - name: Test
-        if: ${{ env.iscode == 'true' }}
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: yarn test --ci --maxWorkers=2
 
       - name: Build
-        if: ${{ env.iscode == 'true' }}
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: yarn build
