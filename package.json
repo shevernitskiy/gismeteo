@@ -6,7 +6,9 @@
   "module": "lib/gismeteo.esm.js",
   "files": [
     "lib",
-    "package.json"
+    "package.json",
+    "README.md",
+    "LICENSE"
   ],
   "license": "MIT",
   "author": "sheverniskiy",
