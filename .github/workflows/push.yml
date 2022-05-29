@@ -26,9 +26,9 @@ jobs:
         uses: tj-actions/changed-files@v21
         with:
           files: |
-            *.ts
-            *.js
-            *.yml
+            **/*.ts
+            **/*.js
+            **/*.yml
 
       - name: Checking changed files
         shell: bash
