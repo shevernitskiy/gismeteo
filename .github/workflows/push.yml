@@ -24,6 +24,7 @@ jobs:
       - name: Checking changed files
         shell: bash
         run: |
+          echo "iscode=false" >> $GITHUB_ENV
           files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
           for changed_file in $files; do
             echo "changed ${changed_file}"

@@ -186,6 +186,13 @@ export class Gismeteo {
     })
   }
 
+  /**
+   * "If the city is in the cache, return the city uri from the cache, otherwise, make a request to the
+   * Gismeteo API to get the city uri and then cache it."
+   *
+   * @param {string} city - string - the name of the city you want to get the weather for
+   * @returns The city_uri is being returned.
+   */
   private async getCityUri(city: string): Promise<CityUri> {
     if (city === this._city_cache.city) {
       return Promise.resolve(this._city_cache.city_uri)
