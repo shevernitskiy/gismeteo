@@ -21,21 +21,23 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v21
+        files: |
+          *.ts
+          *.js
+
       - name: Checking changed files
         shell: bash
         run: |
-          echo "iscode=false" >> $GITHUB_ENV
-          files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
-          echo "commit files:"
-          echo "${files}"
-          for changed_file in $files; do
-            echo "changed ${changed_file}"
-            if [[("${changed_file##*.}" = "ts") || ("${changed_file##*.}" = "js")]]
-            then
-              echo "iscode=true" >> $GITHUB_ENV
-            fi
+          iscode=false
+          echo "iscode=$iscode" >> $GITHUB_ENV
+          for changed_file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            iscode=true
+            echo "iscode=$iscode" >> $GITHUB_ENV
           done
-          echo "Result: ${{ env.iscode }}"
+          echo "result: ${{ env.iscode }}"
 
       - name: Use Node ${{ matrix.node }}
         if: ${{ env.iscode == 'true' }}
