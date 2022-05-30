@@ -11,5 +11,6 @@ module.exports = {
   },
   testRegex: '(/test/.*|(\\.|/)(test|spec))\\.ts$',
   coverageDirectory: 'coverage',
+  coverageReporters: ['json-summary'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
 }

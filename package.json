@@ -30,6 +30,7 @@
     "prepare": "rollup -c",
     "lint": "eslint . --ext .ts",
     "test": "jest gismeteo.test.ts",
+    "test:coverage": "jest --coverage gismeteo.test.ts",
     "playground": "jest playground.test.ts",
     "release": "np patch"
   },
