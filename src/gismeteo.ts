@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import moment from 'moment'
 import { Cheerio, CheerioAPI, Element, load } from 'cheerio'
 import UserAgent from 'user-agents'
@@ -15,7 +15,7 @@ export class Gismeteo {
     pressure: Unit
     wind: Unit
   }
-  private readonly _axios_config = {
+  private readonly _axios_config: AxiosRequestConfig = {
     headers: {
       'user-agent': new UserAgent().toString(),
     },

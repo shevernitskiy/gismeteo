@@ -1,4 +1,5 @@
 import { Gismeteo } from '../src/gismeteo'
+import { GismeteoTomorrow, GismeteoTwoWeeks, GismeteoMonth, GismeteoNow } from '../src/common/types'
 
 jest.setTimeout(15000)
 
@@ -6,39 +7,65 @@ describe('Gismeteo', () => {
   const gismeteo = new Gismeteo()
 
   describe('getNow', () => {
-    test('should not be null', async () => {
-      const result = await gismeteo.getNow('Лондон')
+    let result: GismeteoNow
 
+    beforeAll(async () => {
+      result = await gismeteo.getNow('Лондон')
+    })
+
+    test('should not be null', () => {
       expect(result).not.toBeNull()
+    })
+
+    test('should not contain any undefined values', () => {
+      expect(undefInObj(result)).toBeFalsy()
     })
   })
 
   describe('getTomorrow', () => {
-    test('should not be null and contain 8 items', async () => {
-      const result = await gismeteo.getTommorow('Berlin')
+    let result: GismeteoTomorrow[]
 
-      expect(result).not.toBeNull()
+    beforeAll(async () => {
+      result = await gismeteo.getTommorow('Berlin')
+    })
+
+    test('should contain 8 items', () => {
       expect(result.length).toBe(8)
+    })
+
+    test('should not contain any undefined values', () => {
       expect(undefInArray(result)).toBeFalsy()
     })
   })
 
   describe('getTwoWeeks', () => {
-    test('should not be null and contain 14 items', async () => {
-      const result = await gismeteo.getTwoWeeks('Moscow')
+    let result: GismeteoTwoWeeks[]
 
-      expect(result).not.toBeNull()
+    beforeAll(async () => {
+      result = await gismeteo.getTwoWeeks('Moscow')
+    })
+
+    test('should contain 14 items', () => {
       expect(result.length).toBe(14)
+    })
+
+    test('should not contain any undefined values', () => {
       expect(undefInArray(result)).toBeFalsy()
     })
   })
 
   describe('getMonth', () => {
-    test('should not be null and contain 42 items', async () => {
-      const result = await gismeteo.getMonth('Moscow')
+    let result: GismeteoMonth[]
 
-      expect(result).not.toBeNull()
+    beforeAll(async () => {
+      result = await gismeteo.getMonth('Moscow')
+    })
+
+    test('should contain 42 items', () => {
       expect(result.length).toBe(42)
+    })
+
+    test('should not contain any undefined values', () => {
       expect(undefInArray(result)).toBeFalsy()
     })
   })
@@ -55,4 +82,13 @@ const undefInArray = <T>(input: T[]): boolean => {
   })
 
   return out.includes(false)
+}
+
+const undefInObj = <T>(input: T): boolean => {
+  for (const key in input) {
+    if (input[key] === undefined) {
+      return true
+    }
+  }
+  return false
 }
