@@ -42,6 +42,10 @@ gismeteo.getTwoWeeks('London').then((data) => {
 
 ## Options
 
+```ts
+const gismeteo = new Gismeteo({ lang: 'en', unit_temp: 'F' })
+```
+
 | Name          | Default |  Values   | Description                             |
 | ------------- | :-----: | :-------: | :-------------------------------------- |
 | lang          |   ru    |  en, ru   | language of some conditions and summary |
