@@ -42,6 +42,7 @@ export interface GismeteoNow {
   water_temp: number
   sunrise: number
   sunset: number
+  image?: string
 }
 
 export interface GismeteoTomorrow {

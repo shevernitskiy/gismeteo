@@ -48,6 +48,7 @@ export enum Wildcard {
   NOW_WATER = 'div.now div.water div.item-value div.UNIT_TEMP',
   NOW_SUNRISE = 'div.now div.now-astro div.now-astro-sunrise div.time',
   NOW_SUNSET = 'div.now div.now-astro div.now-astro-sunset div.time',
+  NOW_IMAGE = 'div.now',
   TOMORROW_TIME = 'div[data-stat-value*="weather"] div.widget-row-time div.row-item',
   TOMORROW_TEMP = 'div[data-stat-value*="weather"] div.widget-row-chart-temperature div.value span.UNIT_TEMP',
   TOMORROW_PRECIPITATION = 'div[data-stat-value*="weather"] div.widget-row-precipitation-bars div.row-item div.item-unit',

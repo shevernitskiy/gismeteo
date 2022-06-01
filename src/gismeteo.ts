@@ -130,6 +130,7 @@ export class Gismeteo {
         water_temp: this.numberify($(this.unitToWildcard(Wildcard.NOW_WATER)).text()),
         sunrise: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNRISE).text(), 'DD MMM YYYY H:mm').unix(),
         sunset: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNSET).text(), 'DD MMM YYYY H:mm').unix(),
+        image: $(Wildcard.NOW_IMAGE).attr('style')?.replace("background-image: url('", '').replace("')", ''),
       }
 
       return out
