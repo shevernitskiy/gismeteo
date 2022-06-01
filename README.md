@@ -88,12 +88,160 @@ gismeteo.getNow('London').then((data) => {
 
 </details>
 
+### Today
+
+3-hour forecast for today.
+
+```ts
+gismeteo.getToday('London').then((data) => {
+  console.log(data)
+})
+```
+
+<details>
+  <summary>Output</summary>
+
+```ts
+;[
+  {
+    dt: 1653674400,
+    temp: 8,
+    pressure: 737,
+    wind_speed: 3,
+    wind_gust: 8,
+    wind_dir: 'ЮЗ',
+    precipitation: 0,
+    humidity: 0,
+    summary: 'Ясно',
+    geomagnetic: 3,
+    road_condition: 'Влажная дорога',
+    pollen_birch: 0,
+    pollen_grass: 1,
+    pollen_ragweed: 0,
+  },
+  {
+    dt: 1653685200,
+    temp: 7,
+    pressure: 736,
+    wind_speed: 2,
+    wind_gust: 6,
+    wind_dir: 'ЮЗ',
+    precipitation: 0,
+    humidity: 300,
+    summary: 'Ясно',
+    geomagnetic: 4,
+    road_condition: 'Роса',
+    pollen_birch: 0,
+    pollen_grass: 0,
+    pollen_ragweed: 0,
+  },
+  {
+    dt: 1653696000,
+    temp: 8,
+    pressure: 735,
+    wind_speed: 3,
+    wind_gust: 6,
+    wind_dir: 'ЮЗ',
+    precipitation: 0,
+    humidity: 600,
+    summary: 'Пасмурно',
+    geomagnetic: 4,
+    road_condition: 'Вода',
+    pollen_birch: 0,
+    pollen_grass: 0,
+    pollen_ragweed: 0,
+  },
+  {
+    dt: 1653706800,
+    temp: 8,
+    pressure: 735,
+    wind_speed: 5,
+    wind_gust: 8,
+    wind_dir: 'З',
+    precipitation: 6.4,
+    humidity: 900,
+    summary: 'Пасмурно, сильный дождь',
+    geomagnetic: 3,
+    road_condition: 'Вода',
+    pollen_birch: 0,
+    pollen_grass: 1,
+    pollen_ragweed: 0,
+  },
+  {
+    dt: 1653717600,
+    temp: 11,
+    pressure: 736,
+    wind_speed: 6,
+    wind_gust: 9,
+    wind_dir: 'З',
+    precipitation: 1.5,
+    humidity: 1200,
+    summary: 'Пасмурно, дождь',
+    geomagnetic: 4,
+    road_condition: 'Вода',
+    pollen_birch: 0,
+    pollen_grass: 1,
+    pollen_ragweed: 0,
+  },
+  {
+    dt: 1653728400,
+    temp: 12,
+    pressure: 737,
+    wind_speed: 7,
+    wind_gust: 13,
+    wind_dir: 'З',
+    precipitation: 0.9,
+    humidity: 1500,
+    summary: 'Малооблачно, небольшой дождь',
+    geomagnetic: 2,
+    road_condition: 'Влажная дорога',
+    pollen_birch: 1,
+    pollen_grass: 0,
+    pollen_ragweed: 0,
+  },
+  {
+    dt: 1653739200,
+    temp: 12,
+    pressure: 738,
+    wind_speed: 6,
+    wind_gust: 15,
+    wind_dir: 'З',
+    precipitation: 0.7,
+    humidity: 1800,
+    summary: 'Малооблачно, небольшой дождь',
+    geomagnetic: 3,
+    road_condition: 'Влажная дорога',
+    pollen_birch: 1,
+    pollen_grass: 1,
+    pollen_ragweed: 0,
+  },
+  {
+    dt: 1653750000,
+    temp: 9,
+    pressure: 739,
+    wind_speed: 4,
+    wind_gust: 12,
+    wind_dir: 'З',
+    precipitation: 0,
+    humidity: 2100,
+    summary: 'Облачно',
+    geomagnetic: 2,
+    road_condition: 'Сухая дорога',
+    pollen_birch: 1,
+    pollen_grass: 0,
+    pollen_ragweed: 0,
+  },
+]
+```
+
+</details>
+
 ### Tomorrow
 
 3-hour forecast for tomorrow.
 
 ```ts
-gismeteo.getTommorow('London').then((data) => {
+gismeteo.getTomorrow('London').then((data) => {
   console.log(data)
 })
 ```

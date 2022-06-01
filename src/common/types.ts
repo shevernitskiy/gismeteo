@@ -62,4 +62,21 @@ export interface GismeteoTomorrow {
   pollen_ragweed: number
 }
 
+export interface GismeteoToday {
+  dt: number
+  temp: number
+  humidity: number
+  pressure: number
+  wind_speed: number
+  wind_gust: number
+  wind_dir: string
+  precipitation: number
+  summary: string
+  road_condition: string
+  geomagnetic: number
+  pollen_birch: number
+  pollen_grass: number
+  pollen_ragweed: number
+}
+
 export type CityUri = string

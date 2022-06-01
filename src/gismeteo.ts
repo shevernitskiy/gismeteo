@@ -143,10 +143,26 @@ export class Gismeteo {
    * @param {string} city - string - the name of the city you want to get the weather for
    * @returns An array of GismeteoTomorrow
    */
-  public async getTommorow(city: string): Promise<GismeteoTomorrow[]> {
+  public async getTomorrow<GismeteoTomorrow>(city: string): Promise<GismeteoTomorrow[]> {
     const city_uri = await this.getCityUri(city)
 
-    return axios.get(`${this._base_url}${city_uri}${Endpoint.TOMMOROW}`, this._axios_config).then(({ data }) => {
+    return this.getOneDay(`${this._base_url}${city_uri}${Endpoint.TOMMOROW}`)
+  }
+
+  /**
+   * It takes a city name, then makes a request to the Gismeteo, parses the
+   * HTML, and returns an array of GismeteoToday with the weather data
+   * @param {string} city - string - the name of the city you want to get the weather for
+   * @returns An array of GismeteoToday
+   */
+  public async getToday<GismeteoToday>(city: string): Promise<GismeteoToday[]> {
+    const city_uri = await this.getCityUri(city)
+
+    return this.getOneDay(`${this._base_url}${city_uri}`)
+  }
+
+  private async getOneDay<T>(url: string): Promise<T[]> {
+    return axios.get(url, this._axios_config).then(({ data }) => {
       const $ = load(this.prepareHtml(data))
       let out: Partial<GismeteoTomorrow>[] = []
 
@@ -183,7 +199,7 @@ export class Gismeteo {
         out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
       }
 
-      return out as GismeteoTomorrow[]
+      return out as T[]
     })
   }
 
@@ -227,7 +243,8 @@ export class Gismeteo {
     const out: T[] = []
 
     for (let i = 0; i < input.length; i++) {
-      const strip_date = input[i].split(', UTC: ')[1]
+      const strip_date = input[i].split(', UTC: ')[1] ? input[i].split(', UTC: ')[1] : input[i].split('от: ')[1].replace(' (UTC)', '')
+
       out.push({ dt: moment(strip_date, 'YYYY-MM-DD HH:mm:ss').unix() } as unknown as T)
     }
 
@@ -289,5 +306,7 @@ export class Gismeteo {
     return data
       .split('<span>&mdash;</span>')
       .join('<span class="wind-unit unit unit_wind_m_s">0</span><span class="wind-unit unit unit_wind_km_h">0</span>')
+      .split('<svg><use xlink:href="#wind-zero"/></svg>')
+      .join('<div class="direction">-</div>')
   }
 }
