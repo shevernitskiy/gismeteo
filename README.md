@@ -82,7 +82,8 @@ gismeteo.getNow('London').then((data) => {
   geomagnetic: 2,
   water_temp: 9.5,
   sunrise: 1653613140,
-  sunset: 1653674100
+  sunset: 1653674100,
+  image: 'https://static.gismeteo.st/assets/bg/d_c2.jpg'
 }
 ```
 
