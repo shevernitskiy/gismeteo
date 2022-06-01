@@ -6,7 +6,7 @@ import is_number from 'is-number'
 
 import { Endpoint, Unit, Wildcard } from './common/constants'
 import { GismeteoCityError } from './common/errors'
-import { CityUri, GismeteoMonth, GismeteoNow, GismeteoOptions, GismeteoTomorrow, GismeteoTwoWeeks } from './common/types'
+import { CityUri, GismeteoMonth, GismeteoNow, GismeteoOptions, GismeteoTwoWeeks, GismeteoOneDay } from './common/types'
 
 export class Gismeteo {
   private _base_url: Endpoint
@@ -164,10 +164,10 @@ export class Gismeteo {
   private async getOneDay<T>(url: string): Promise<T[]> {
     return axios.get(url, this._axios_config).then(({ data }) => {
       const $ = load(this.prepareHtml(data))
-      let out: Partial<GismeteoTomorrow>[] = []
+      let out: Partial<GismeteoOneDay>[] = []
 
       const dates = this.parseAttr<string>($, Wildcard.ONEDAY_TIME, 'title')
-      out = this.parseDtFromStringArray<Partial<GismeteoTomorrow>>(dates)
+      out = this.parseDtFromStringArray<Partial<GismeteoOneDay>>(dates)
       out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.ONEDAY_TEMP))
       out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE))
       out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED))

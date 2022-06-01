@@ -5,7 +5,7 @@ export interface GismeteoOptions {
   unit_wind?: 'ms' | 'kmh'
 }
 
-export interface GismeteoTwoWeeks {
+export type GismeteoTwoWeeks = {
   dt: number
   tmax: number
   tmin: number
@@ -24,7 +24,7 @@ export interface GismeteoTwoWeeks {
   pollen_ragweed: number
 }
 
-export interface GismeteoMonth {
+export type GismeteoMonth = {
   dt: number
   tmax: number
   tmin: number
@@ -45,7 +45,7 @@ export interface GismeteoNow {
   image?: string
 }
 
-export interface GismeteoTomorrow {
+export type GismeteoOneDay = {
   dt: number
   temp: number
   humidity: number
@@ -62,21 +62,7 @@ export interface GismeteoTomorrow {
   pollen_ragweed: number
 }
 
-export interface GismeteoToday {
-  dt: number
-  temp: number
-  humidity: number
-  pressure: number
-  wind_speed: number
-  wind_gust: number
-  wind_dir: string
-  precipitation: number
-  summary: string
-  road_condition: string
-  geomagnetic: number
-  pollen_birch: number
-  pollen_grass: number
-  pollen_ragweed: number
-}
+export type GismeteoToday = GismeteoOneDay
+export type GismeteoTomorrow = GismeteoOneDay
 
 export type CityUri = string
