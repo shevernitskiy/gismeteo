@@ -166,35 +166,35 @@ export class Gismeteo {
       const $ = load(this.prepareHtml(data))
       let out: Partial<GismeteoTomorrow>[] = []
 
-      const dates = this.parseAttr<string>($, Wildcard.TOMORROW_TIME, 'title')
+      const dates = this.parseAttr<string>($, Wildcard.ONEDAY_TIME, 'title')
       out = this.parseDtFromStringArray<Partial<GismeteoTomorrow>>(dates)
-      out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.TOMORROW_TEMP))
-      out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.TOMORROW_PRESSURE))
-      out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.TOMORROW_WINDSPEED))
-      out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.TOMORROW_WINDGUST))
-      out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.TOMORROW_WINDDIR))
-      out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.TOMORROW_PRECIPITATION))
-      out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.TOMORROW_HUMIDITY))
-      out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.TOMORROW_SUMMARY, 'data-text'))
-      out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.TOMORROW_GEOMAGNETIC))
+      out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.ONEDAY_TEMP))
+      out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE))
+      out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED))
+      out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST))
+      out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR))
+      out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION))
+      out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY))
+      out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'))
+      out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC))
 
-      if ($(Wildcard.TOMORROW_ROADS).length > 0) {
-        out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.TOMORROW_ROADS))
+      if ($(Wildcard.ONEDAY_ROADS).length > 0) {
+        out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.ONEDAY_ROADS))
       } else {
         out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
       }
-      if ($(Wildcard.TOMORROW_POLLEN_BIRCH).length > 0) {
-        out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.TOMORROW_POLLEN_BIRCH))
+      if ($(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0) {
+        out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH))
       } else {
         out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
       }
-      if ($(Wildcard.TOMORROW_POLLEN_GRASS).length > 0) {
-        out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.TOMORROW_POLLEN_GRASS))
+      if ($(Wildcard.ONEDAY_POLLEN_GRASS).length > 0) {
+        out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS))
       } else {
         out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
       }
-      if ($(Wildcard.TOMORROW_POLLEN_RAGWEED).length > 0) {
-        out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.TOMORROW_POLLEN_RAGWEED))
+      if ($(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0) {
+        out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED))
       } else {
         out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
       }
