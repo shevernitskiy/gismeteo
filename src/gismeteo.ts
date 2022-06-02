@@ -5,7 +5,7 @@ import UserAgent from 'user-agents'
 import is_number from 'is-number'
 
 import { Endpoint, Unit, Wildcard } from './common/constants'
-import { GismeteoCityError } from './common/errors'
+import { GismeteoCityError, GismeteoConnectionError } from './common/errors'
 import { CityUri, GismeteoMonth, GismeteoNow, GismeteoOptions, GismeteoTwoWeeks, GismeteoOneDay } from './common/types'
 
 export class Gismeteo {
@@ -43,46 +43,55 @@ export class Gismeteo {
   public async getTwoWeeks(city: string): Promise<GismeteoTwoWeeks[]> {
     const city_uri = await this.getCityUri(city)
 
-    return axios.get(`${this._base_url}${city_uri}${Endpoint.TWOWEEKS}`, this._axios_config).then(({ data }) => {
-      const $ = load(this.prepareHtml(data))
-      let out: Partial<GismeteoTwoWeeks>[] = []
+    return axios
+      .get(`${this._base_url}${city_uri}${Endpoint.TWOWEEKS}`, this._axios_config)
+      .then(({ data }) => {
+        const $ = load(this.prepareHtml(data))
+        let out: Partial<GismeteoTwoWeeks>[] = []
 
-      out = this.parseDates<Partial<GismeteoTwoWeeks>>($, Wildcard.TWOWEEKS_DATE)
-      out = this.mergeArray(out, 'tmax', this.parseValue<number>($, Wildcard.TWOWEEKS_TMAX))
-      out = this.mergeArray(out, 'tmin', this.parseValue<number>($, Wildcard.TWOWEEKS_TMIN))
-      out = this.mergeArray(out, 'tavg', this.parseValue<number>($, Wildcard.TWOWEEKS_TAVG))
-      out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.TWOWEEKS_PRESSURE))
-      out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.TWOWEEKS_WINDSPEED))
-      out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.TWOWEEKS_WINDGUST))
-      out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.TWOWEEKS_WINDDIR))
-      out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.TWOWEEKS_PRECIPITATION))
-      out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.TWOWEEKS_HUMIDITY))
-      out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.TWOWEEKS_SUMMARY, 'data-text'))
-      out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.TWOWEEKS_GEOMAGNETIC))
+        out = this.parseDates<Partial<GismeteoTwoWeeks>>($, Wildcard.TWOWEEKS_DATE)
+        out = this.mergeArray(out, 'tmax', this.parseValue<number>($, Wildcard.TWOWEEKS_TMAX))
+        out = this.mergeArray(out, 'tmin', this.parseValue<number>($, Wildcard.TWOWEEKS_TMIN))
+        out = this.mergeArray(out, 'tavg', this.parseValue<number>($, Wildcard.TWOWEEKS_TAVG))
+        out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.TWOWEEKS_PRESSURE))
+        out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.TWOWEEKS_WINDSPEED))
+        out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.TWOWEEKS_WINDGUST))
+        out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.TWOWEEKS_WINDDIR))
+        out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.TWOWEEKS_PRECIPITATION))
+        out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.TWOWEEKS_HUMIDITY))
+        out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.TWOWEEKS_SUMMARY, 'data-text'))
+        out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.TWOWEEKS_GEOMAGNETIC))
 
-      if ($(Wildcard.TWOWEEKS_ROADS).length > 0) {
-        out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.TWOWEEKS_ROADS))
-      } else {
-        out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
-      }
-      if ($(Wildcard.TWOWEEKS_POLLEN_BIRCH).length > 0) {
-        out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_BIRCH))
-      } else {
-        out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
-      }
-      if ($(Wildcard.TWOWEEKS_POLLEN_GRASS).length > 0) {
-        out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_GRASS))
-      } else {
-        out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
-      }
-      if ($(Wildcard.TWOWEEKS_POLLEN_RAGWEED).length > 0) {
-        out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_RAGWEED))
-      } else {
-        out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
-      }
+        if ($(Wildcard.TWOWEEKS_ROADS).length > 0) {
+          out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.TWOWEEKS_ROADS))
+        } else {
+          out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
+        }
+        if ($(Wildcard.TWOWEEKS_POLLEN_BIRCH).length > 0) {
+          out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_BIRCH))
+        } else {
+          out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
+        }
+        if ($(Wildcard.TWOWEEKS_POLLEN_GRASS).length > 0) {
+          out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_GRASS))
+        } else {
+          out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
+        }
+        if ($(Wildcard.TWOWEEKS_POLLEN_RAGWEED).length > 0) {
+          out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_RAGWEED))
+        } else {
+          out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
+        }
 
-      return out as GismeteoTwoWeeks[]
-    })
+        return out as GismeteoTwoWeeks[]
+      })
+      .catch((err) => {
+        if (err instanceof GismeteoCityError) {
+          throw err
+        } else {
+          throw new GismeteoConnectionError(err)
+        }
+      })
   }
 
   /**
@@ -95,16 +104,25 @@ export class Gismeteo {
   public async getMonth(city: string): Promise<GismeteoMonth[]> {
     const city_uri = await this.getCityUri(city)
 
-    return axios.get(`${this._base_url}${city_uri}${Endpoint.MONTH}`, this._axios_config).then(({ data }) => {
-      const $ = load(this.prepareHtml(data))
-      let out: Partial<GismeteoMonth>[] = []
+    return axios
+      .get(`${this._base_url}${city_uri}${Endpoint.MONTH}`, this._axios_config)
+      .then(({ data }) => {
+        const $ = load(this.prepareHtml(data))
+        let out: Partial<GismeteoMonth>[] = []
 
-      out = this.parseDates<Partial<GismeteoTwoWeeks>>($, Wildcard.MONTH_DATE)
-      out = this.mergeArray(out, 'tmax', this.parseValue<number>($, Wildcard.MONTH_TMAX))
-      out = this.mergeArray(out, 'tmin', this.parseValue<number>($, Wildcard.MONTH_TMIN))
+        out = this.parseDates<Partial<GismeteoTwoWeeks>>($, Wildcard.MONTH_DATE)
+        out = this.mergeArray(out, 'tmax', this.parseValue<number>($, Wildcard.MONTH_TMAX))
+        out = this.mergeArray(out, 'tmin', this.parseValue<number>($, Wildcard.MONTH_TMIN))
 
-      return out as GismeteoMonth[]
-    })
+        return out as GismeteoMonth[]
+      })
+      .catch((err) => {
+        if (err instanceof GismeteoCityError) {
+          throw err
+        } else {
+          throw new GismeteoConnectionError(err)
+        }
+      })
   }
 
   /**
@@ -115,26 +133,35 @@ export class Gismeteo {
   public async getNow(city: string): Promise<GismeteoNow> {
     const city_uri = await this.getCityUri(city)
 
-    return axios.get(`${this._base_url}${city_uri}${Endpoint.NOW}`, this._axios_config).then(({ data }) => {
-      const $ = load(this.prepareHtml(data))
+    return axios
+      .get(`${this._base_url}${city_uri}${Endpoint.NOW}`, this._axios_config)
+      .then(({ data }) => {
+        const $ = load(this.prepareHtml(data))
 
-      const out: GismeteoNow = {
-        temp: this.numberify($(this.unitToWildcard(Wildcard.NOW_TEMP)).text()),
-        temp_feels: this.numberify($(this.unitToWildcard(Wildcard.NOW_TEMPFEELS)).text()),
-        wind_speed: this.numberify(this.parentText($, Wildcard.NOW_WINDSPEED)),
-        wind_dir: $(this.unitToWildcard(Wildcard.NOW_WINDDIR)).last().text(),
-        pressure: this.numberify(this.parentText($, Wildcard.NOW_PRESSURE)),
-        humidity: this.numberify($(Wildcard.NOW_HUMIDITY).text()),
-        summary: $(Wildcard.NOW_SUMMARY).text(),
-        geomagnetic: this.numberify($(Wildcard.NOW_GEOMAGNETIC).text()),
-        water_temp: this.numberify($(this.unitToWildcard(Wildcard.NOW_WATER)).text()),
-        sunrise: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNRISE).text(), 'DD MMM YYYY H:mm').unix(),
-        sunset: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNSET).text(), 'DD MMM YYYY H:mm').unix(),
-        image: $(Wildcard.NOW_IMAGE).attr('style')?.replace("background-image: url('", '').replace("')", ''),
-      }
+        const out: GismeteoNow = {
+          temp: this.numberify($(this.unitToWildcard(Wildcard.NOW_TEMP)).text()),
+          temp_feels: this.numberify($(this.unitToWildcard(Wildcard.NOW_TEMPFEELS)).text()),
+          wind_speed: this.numberify(this.parentText($, Wildcard.NOW_WINDSPEED)),
+          wind_dir: $(this.unitToWildcard(Wildcard.NOW_WINDDIR)).last().text(),
+          pressure: this.numberify(this.parentText($, Wildcard.NOW_PRESSURE)),
+          humidity: this.numberify($(Wildcard.NOW_HUMIDITY).text()),
+          summary: $(Wildcard.NOW_SUMMARY).text(),
+          geomagnetic: this.numberify($(Wildcard.NOW_GEOMAGNETIC).text()),
+          water_temp: this.numberify($(this.unitToWildcard(Wildcard.NOW_WATER)).text()),
+          sunrise: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNRISE).text(), 'DD MMM YYYY H:mm').unix(),
+          sunset: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNSET).text(), 'DD MMM YYYY H:mm').unix(),
+          image: $(Wildcard.NOW_IMAGE).attr('style')?.replace("background-image: url('", '').replace("')", ''),
+        }
 
-      return out
-    })
+        return out
+      })
+      .catch((err) => {
+        if (err instanceof GismeteoCityError) {
+          throw err
+        } else {
+          throw new GismeteoConnectionError(err)
+        }
+      })
   }
 
   /**
@@ -162,45 +189,54 @@ export class Gismeteo {
   }
 
   private async getOneDay<T>(url: string): Promise<T[]> {
-    return axios.get(url, this._axios_config).then(({ data }) => {
-      const $ = load(this.prepareHtml(data))
-      let out: Partial<GismeteoOneDay>[] = []
+    return axios
+      .get(url, this._axios_config)
+      .then(({ data }) => {
+        const $ = load(this.prepareHtml(data))
+        let out: Partial<GismeteoOneDay>[] = []
 
-      const dates = this.parseAttr<string>($, Wildcard.ONEDAY_TIME, 'title')
-      out = this.parseDtFromStringArray<Partial<GismeteoOneDay>>(dates)
-      out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.ONEDAY_TEMP))
-      out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE))
-      out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED))
-      out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST))
-      out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR))
-      out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION))
-      out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY))
-      out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'))
-      out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC))
+        const dates = this.parseAttr<string>($, Wildcard.ONEDAY_TIME, 'title')
+        out = this.parseDtFromStringArray<Partial<GismeteoOneDay>>(dates)
+        out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.ONEDAY_TEMP))
+        out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE))
+        out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED))
+        out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST))
+        out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR))
+        out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION))
+        out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY))
+        out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'))
+        out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC))
 
-      if ($(Wildcard.ONEDAY_ROADS).length > 0) {
-        out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.ONEDAY_ROADS))
-      } else {
-        out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
-      }
-      if ($(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0) {
-        out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH))
-      } else {
-        out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
-      }
-      if ($(Wildcard.ONEDAY_POLLEN_GRASS).length > 0) {
-        out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS))
-      } else {
-        out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
-      }
-      if ($(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0) {
-        out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED))
-      } else {
-        out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
-      }
+        if ($(Wildcard.ONEDAY_ROADS).length > 0) {
+          out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.ONEDAY_ROADS))
+        } else {
+          out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
+        }
+        if ($(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0) {
+          out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH))
+        } else {
+          out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
+        }
+        if ($(Wildcard.ONEDAY_POLLEN_GRASS).length > 0) {
+          out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS))
+        } else {
+          out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
+        }
+        if ($(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0) {
+          out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED))
+        } else {
+          out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
+        }
 
-      return out as T[]
-    })
+        return out as T[]
+      })
+      .catch((err) => {
+        if (err instanceof GismeteoCityError) {
+          throw err
+        } else {
+          throw new GismeteoConnectionError(err)
+        }
+      })
   }
 
   /**
@@ -215,16 +251,21 @@ export class Gismeteo {
       return Promise.resolve(this._city_cache.city_uri)
     }
 
-    return axios.get(`${Endpoint.SEARCH}${encodeURIComponent(city)}/9/`, this._axios_config).then(({ data }) => {
-      if (data.data.length === 0 || data.data[0]?.url === undefined) {
-        throw new GismeteoCityError('Unable to find uri for given city name')
-      }
-      this._city_cache = {
-        city: city,
-        city_uri: data.data[0].url,
-      }
-      return data.data[0].url
-    })
+    return axios
+      .get(`${Endpoint.SEARCH}${encodeURIComponent(city)}/9/`, this._axios_config)
+      .then(({ data }) => {
+        if (data.data.length === 0 || data.data[0]?.url === undefined) {
+          throw new GismeteoCityError('Unable to find uri for given city name')
+        }
+        this._city_cache = {
+          city: city,
+          city_uri: data.data[0].url,
+        }
+        return data.data[0].url
+      })
+      .catch((err) => {
+        throw new GismeteoConnectionError(err)
+      })
   }
 
   private parseDates<T>($: CheerioAPI, wildcard: Wildcard): T[] {
