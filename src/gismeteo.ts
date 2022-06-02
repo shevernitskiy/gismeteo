@@ -240,8 +240,8 @@ export class Gismeteo {
   }
 
   /**
-   * It takes a city name, gets the city URI, then makes a request to the Gismeteo site, parses the
-   * HTML, and returns an array of GismeteoTenDays
+   * It takes a city name, then makes a request to the Gismeteo, parses the
+   * HTML, and returns an array of GismeteoTenDays with the weather data
    * @param {string} city - string - the name of the city you want to get the weather for
    * @returns An array of GismeteoTenDays.
    */
