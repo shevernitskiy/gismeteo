@@ -36,9 +36,9 @@ export class Gismeteo {
 
   /**
    * It takes a city name, then makes a request to the two weeks endpoint, parses
-   * the HTML, and returns an array of objects
+   * the HTML, and returns an array of GismeteoTwoWeeks
    * @param {string} city - string - the name of the city you want to get the weather for
-   * @returns An array of GismeteoTwoWeeks.
+   * @returns An array of GismeteoTwoWeeks
    */
   public async getTwoWeeks(city: string): Promise<GismeteoTwoWeeks[]> {
     const city_uri = await this.getCityUri(city)
