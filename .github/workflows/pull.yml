@@ -38,6 +38,16 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v21
+        with:
+          files: |
+            **/*.ts
+            **/*.js
 
       - name: Use Node ${{ matrix.node }}
         uses: actions/setup-node@v3
@@ -46,13 +56,17 @@ jobs:
           cache: 'yarn'
 
       - name: Install deps and build (with cache)
+        if: steps.changed-files.outputs.only_changed == 'true'
         run: yarn
 
       - name: Lint
+        if: steps.changed-files.outputs.only_changed == 'true'
         run: yarn lint
 
       - name: Test
+        if: steps.changed-files.outputs.only_changed == 'true'
         run: yarn test --ci --maxWorkers=2
 
       - name: Build
+        if: steps.changed-files.outputs.only_changed == 'true'
         run: yarn build
