@@ -6,6 +6,7 @@ export enum Endpoint {
   MONTH = 'month/',
   NOW = 'now/',
   TOMMOROW = 'tomorrow/',
+  TENDAYS = '3-days/',
 }
 
 export enum Unit {
@@ -63,4 +64,5 @@ export enum Wildcard {
   ONEDAY_PRESSURE = 'div[data-stat-value*="pressure"] div.widget-row-chart-pressure div.value span.UNIT_PRESSURE',
   ONEDAY_HUMIDITY = 'div[data-stat-value*="humidity"] div.widget-items div.row-item',
   ONEDAY_GEOMAGNETIC = 'div[data-stat-value*="geomagnetic"] div.row-item div.item',
+  TENDAYS_TIME = 'div[data-stat-value*="weather"] div.widget-date-wrap a.item',
 }

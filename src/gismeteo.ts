@@ -6,7 +6,7 @@ import is_number from 'is-number'
 
 import { Endpoint, Unit, Wildcard } from './common/constants'
 import { GismeteoCityError, GismeteoConnectionError } from './common/errors'
-import { CityUri, GismeteoMonth, GismeteoNow, GismeteoOptions, GismeteoTwoWeeks, GismeteoOneDay } from './common/types'
+import { CityUri, GismeteoMonth, GismeteoNow, GismeteoOptions, GismeteoTwoWeeks, GismeteoOneDay, GismeteoTenDays } from './common/types'
 
 export class Gismeteo {
   private _base_url: Endpoint
@@ -240,6 +240,72 @@ export class Gismeteo {
   }
 
   /**
+   * It takes a city name, gets the city URI, then makes a request to the Gismeteo site, parses the
+   * HTML, and returns an array of GismeteoTenDays
+   * @param {string} city - string - the name of the city you want to get the weather for
+   * @returns An array of GismeteoTenDays.
+   */
+  public async getTenDays(city: string): Promise<GismeteoTenDays[]> {
+    const city_uri = await this.getCityUri(city)
+
+    return axios
+      .get(`${this._base_url}${city_uri}${Endpoint.TENDAYS}`, this._axios_config)
+      .then(({ data }) => {
+        const $ = load(this.prepareHtml(data))
+        let out: Partial<GismeteoTenDays>[] = []
+
+        out = this.parseDatesFromDaytime<Partial<GismeteoTenDays>>($, Wildcard.TENDAYS_TIME)
+        out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.ONEDAY_TEMP))
+        out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE))
+        out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED))
+        out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST))
+        out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR))
+        out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION))
+        out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY))
+        out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'))
+        out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC))
+
+        if ($(Wildcard.ONEDAY_ROADS).length > 0) {
+          out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.ONEDAY_ROADS))
+        } else {
+          out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
+        }
+        if ($(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0) {
+          out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH))
+        } else {
+          out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
+        }
+        if ($(Wildcard.ONEDAY_POLLEN_GRASS).length > 0) {
+          out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS))
+        } else {
+          out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
+        }
+        if ($(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0) {
+          out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED))
+        } else {
+          out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
+        }
+
+        out.forEach((item, index) => {
+          if (item.geomagnetic === undefined) {
+            out[index].geomagnetic = 0
+          }
+        })
+
+        console.log(out)
+
+        return out as GismeteoTenDays[]
+      })
+      .catch((err) => {
+        if (err instanceof GismeteoCityError) {
+          throw err
+        } else {
+          throw new GismeteoConnectionError(err)
+        }
+      })
+  }
+
+  /**
    * "If the city is in the cache, return the city uri from the cache, otherwise, make a request to the
    * Gismeteo API to get the city uri and then cache it."
    *
@@ -291,6 +357,18 @@ export class Gismeteo {
       const strip_date = input[i].split(', UTC: ')[1] ? input[i].split(', UTC: ')[1] : input[i].split('от: ')[1].replace(' (UTC)', '')
 
       out.push({ dt: moment(strip_date, 'YYYY-MM-DD HH:mm:ss').unix() } as unknown as T)
+    }
+
+    return out
+  }
+
+  private parseDatesFromDaytime<T>($: CheerioAPI, wildcard: Wildcard): T[] {
+    const search = $(wildcard)
+    const start_date = moment(search.first().text().trim().split(', ')[1] + moment().format('YYYY'), 'DD MMMYYYY', 'ru')
+    const out: T[] = []
+
+    for (let i = 0; i < search.length * 4; i++) {
+      out.push({ dt: start_date.add(i > 0 ? 6 : 0, 'hour').unix() } as unknown as T)
     }
 
     return out

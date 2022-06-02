@@ -1,5 +1,5 @@
 import { Gismeteo } from '../src/gismeteo'
-import { GismeteoTomorrow, GismeteoTwoWeeks, GismeteoMonth, GismeteoNow, GismeteoToday } from '../src/common/types'
+import { GismeteoTomorrow, GismeteoTwoWeeks, GismeteoMonth, GismeteoNow, GismeteoToday, GismeteoTenDays } from '../src/common/types'
 
 jest.setTimeout(15000)
 
@@ -47,6 +47,22 @@ describe('Gismeteo', () => {
 
     test('should contain 8 items', () => {
       expect(result.length).toBe(8)
+    })
+
+    test('should not contain any undefined values', () => {
+      expect(undefInArray(result)).toBeFalsy()
+    })
+  })
+
+  describe('getTenDays', () => {
+    let result: GismeteoTenDays[]
+
+    beforeAll(async () => {
+      result = await gismeteo.getTenDays('Moscow')
+    })
+
+    test('should contain 40 items', () => {
+      expect(result.length).toBe(40)
     })
 
     test('should not contain any undefined values', () => {

@@ -64,5 +64,6 @@ export type GismeteoOneDay = {
 
 export type GismeteoToday = GismeteoOneDay
 export type GismeteoTomorrow = GismeteoOneDay
+export type GismeteoTenDays = GismeteoOneDay
 
 export type CityUri = string
