@@ -264,7 +264,11 @@ export class Gismeteo {
         return data.data[0].url
       })
       .catch((err) => {
-        throw new GismeteoConnectionError(err)
+        if (err instanceof GismeteoCityError) {
+          throw err
+        } else {
+          throw new GismeteoConnectionError(err)
+        }
       })
   }
 
