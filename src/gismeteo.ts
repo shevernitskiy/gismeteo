@@ -292,8 +292,6 @@ export class Gismeteo {
           }
         })
 
-        console.log(out)
-
         return out as GismeteoTenDays[]
       })
       .catch((err) => {
