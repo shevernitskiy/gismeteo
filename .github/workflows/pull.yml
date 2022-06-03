@@ -50,6 +50,7 @@ jobs:
             **/*.js
 
       - name: Use Node ${{ matrix.node }}
+        if: steps.changed-files.outputs.only_changed == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
