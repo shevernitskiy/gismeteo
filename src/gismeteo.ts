@@ -327,17 +327,6 @@ export class Gismeteo {
       })
   }
 
-  private parseDtFromStringArray(input: string[]): number[] {
-    const out: number[] = []
-    for (let i = 0; i < input.length; i++) {
-      const strip_date = input[i].split(', UTC: ')[1] ? input[i].split(', UTC: ')[1] : input[i].split('от: ')[1].replace(' (UTC)', '')
-
-      out.push(moment(strip_date, 'YYYY-MM-DD HH:mm:ss').unix())
-    }
-
-    return out
-  }
-
   private parseDates($: CheerioAPI, wildcard: Wildcard): number[] {
     const search = $(wildcard)
     const start_date = moment(search.first().text() + moment().format('YYYY'), 'DD MMMYYYY', 'ru')
@@ -345,6 +334,17 @@ export class Gismeteo {
 
     for (let i = 0; i < search.length; i++) {
       out.push(start_date.add(i > 0 ? 1 : 0, 'day').unix())
+    }
+
+    return out
+  }
+
+  private parseDtFromStringArray(input: string[]): number[] {
+    const out: number[] = []
+    for (let i = 0; i < input.length; i++) {
+      const strip_date = input[i].split(', UTC: ')[1] ? input[i].split(', UTC: ')[1] : input[i].split('от: ')[1].replace(' (UTC)', '')
+
+      out.push(moment(strip_date, 'YYYY-MM-DD HH:mm:ss').unix())
     }
 
     return out
