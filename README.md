@@ -1390,6 +1390,6 @@ Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License.
 ## Disclaimer
 
 You should understand, that data of gismeteo site is copyrighted material.
-Library itself doesn't containt any gismeteo coprighted data, but the fetched data will be property of gismeteo.
+Library itself doesn't containt any gismeteo copyrighted data, but the fetched data will be property of gismeteo.
 
 See the following links [EN](https://www.gismeteo.com/page/agreement/), [RU](https://www.gismeteo.ru/page/agreement/)

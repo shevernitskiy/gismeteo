@@ -47,43 +47,40 @@ export class Gismeteo {
       .get(`${this._base_url}${city_uri}${Endpoint.TWOWEEKS}`, this._axios_config)
       .then(({ data }) => {
         const $ = load(this.prepareHtml(data))
-        let out: Partial<GismeteoTwoWeeks>[] = []
+        const times = this.parseDates($, Wildcard.TWOWEEKS_DATE)
 
-        out = this.parseDates<Partial<GismeteoTwoWeeks>>($, Wildcard.TWOWEEKS_DATE)
-        out = this.mergeArray(out, 'tmax', this.parseValue<number>($, Wildcard.TWOWEEKS_TMAX))
-        out = this.mergeArray(out, 'tmin', this.parseValue<number>($, Wildcard.TWOWEEKS_TMIN))
-        out = this.mergeArray(out, 'tavg', this.parseValue<number>($, Wildcard.TWOWEEKS_TAVG))
-        out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.TWOWEEKS_PRESSURE))
-        out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.TWOWEEKS_WINDSPEED))
-        out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.TWOWEEKS_WINDGUST))
-        out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.TWOWEEKS_WINDDIR))
-        out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.TWOWEEKS_PRECIPITATION))
-        out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.TWOWEEKS_HUMIDITY))
-        out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.TWOWEEKS_SUMMARY, 'data-text'))
-        out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.TWOWEEKS_GEOMAGNETIC))
+        const out = this.makeCollection<GismeteoTwoWeeks>({
+          dt: times,
+          tmax: this.parseValue<number>($, Wildcard.TWOWEEKS_TMAX),
+          tmin: this.parseValue<number>($, Wildcard.TWOWEEKS_TMIN),
+          tavg: this.parseValue<number>($, Wildcard.TWOWEEKS_TAVG),
+          pressure: this.parseValue<number>($, Wildcard.TWOWEEKS_PRESSURE),
+          wind_speed: this.parseValue<number>($, Wildcard.TWOWEEKS_WINDSPEED),
+          wind_gust: this.parseValue<number>($, Wildcard.TWOWEEKS_WINDGUST),
+          wind_dir: this.parseValue<string>($, Wildcard.TWOWEEKS_WINDDIR),
+          precipitation: this.parseValue<number>($, Wildcard.TWOWEEKS_PRECIPITATION),
+          humidity: this.parseValue<number>($, Wildcard.TWOWEEKS_HUMIDITY),
+          summary: this.parseAttr<string>($, Wildcard.TWOWEEKS_SUMMARY, 'data-text'),
+          geomagnetic: this.parseValue<number>($, Wildcard.TWOWEEKS_GEOMAGNETIC),
+          road_condition:
+            $(Wildcard.TWOWEEKS_ROADS).length > 0
+              ? this.parseValue<string>($, Wildcard.TWOWEEKS_ROADS)
+              : new Array(times.length).fill('unknown'),
+          pollen_birch:
+            $(Wildcard.TWOWEEKS_POLLEN_BIRCH).length > 0
+              ? this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_BIRCH)
+              : new Array(times.length).fill(0),
+          pollen_grass:
+            $(Wildcard.TWOWEEKS_POLLEN_GRASS).length > 0
+              ? this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_GRASS)
+              : new Array(times.length).fill(0),
+          pollen_ragweed:
+            $(Wildcard.TWOWEEKS_POLLEN_RAGWEED).length > 0
+              ? this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_RAGWEED)
+              : new Array(times.length).fill(0),
+        })
 
-        if ($(Wildcard.TWOWEEKS_ROADS).length > 0) {
-          out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.TWOWEEKS_ROADS))
-        } else {
-          out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
-        }
-        if ($(Wildcard.TWOWEEKS_POLLEN_BIRCH).length > 0) {
-          out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_BIRCH))
-        } else {
-          out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
-        }
-        if ($(Wildcard.TWOWEEKS_POLLEN_GRASS).length > 0) {
-          out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_GRASS))
-        } else {
-          out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
-        }
-        if ($(Wildcard.TWOWEEKS_POLLEN_RAGWEED).length > 0) {
-          out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_RAGWEED))
-        } else {
-          out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
-        }
-
-        return out as GismeteoTwoWeeks[]
+        return out
       })
       .catch((err) => {
         if (err instanceof GismeteoCityError) {
@@ -108,13 +105,14 @@ export class Gismeteo {
       .get(`${this._base_url}${city_uri}${Endpoint.MONTH}`, this._axios_config)
       .then(({ data }) => {
         const $ = load(this.prepareHtml(data))
-        let out: Partial<GismeteoMonth>[] = []
 
-        out = this.parseDates<Partial<GismeteoTwoWeeks>>($, Wildcard.MONTH_DATE)
-        out = this.mergeArray(out, 'tmax', this.parseValue<number>($, Wildcard.MONTH_TMAX))
-        out = this.mergeArray(out, 'tmin', this.parseValue<number>($, Wildcard.MONTH_TMIN))
+        const out = this.makeCollection<GismeteoMonth>({
+          dt: this.parseDates($, Wildcard.MONTH_DATE),
+          tmax: this.parseValue<number>($, Wildcard.MONTH_TMAX),
+          tmin: this.parseValue<number>($, Wildcard.MONTH_TMIN),
+        })
 
-        return out as GismeteoMonth[]
+        return out
       })
       .catch((err) => {
         if (err instanceof GismeteoCityError) {
@@ -193,40 +191,36 @@ export class Gismeteo {
       .get(url, this._axios_config)
       .then(({ data }) => {
         const $ = load(this.prepareHtml(data))
-        let out: Partial<GismeteoOneDay>[] = []
+        const times = this.parseAttr<string>($, Wildcard.ONEDAY_TIME, 'title')
 
-        const dates = this.parseAttr<string>($, Wildcard.ONEDAY_TIME, 'title')
-        out = this.parseDtFromStringArray<Partial<GismeteoOneDay>>(dates)
-        out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.ONEDAY_TEMP))
-        out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE))
-        out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED))
-        out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST))
-        out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR))
-        out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION))
-        out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY))
-        out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'))
-        out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC))
-
-        if ($(Wildcard.ONEDAY_ROADS).length > 0) {
-          out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.ONEDAY_ROADS))
-        } else {
-          out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
-        }
-        if ($(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0) {
-          out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH))
-        } else {
-          out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
-        }
-        if ($(Wildcard.ONEDAY_POLLEN_GRASS).length > 0) {
-          out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS))
-        } else {
-          out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
-        }
-        if ($(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0) {
-          out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED))
-        } else {
-          out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
-        }
+        const out = this.makeCollection<Partial<GismeteoOneDay>>({
+          dt: this.parseDtFromStringArray(times),
+          temp: this.parseValue<number>($, Wildcard.ONEDAY_TEMP),
+          pressure: this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE),
+          wind_speed: this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED),
+          wind_gust: this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST),
+          wind_dir: this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR),
+          precipitation: this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION),
+          humidity: this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY),
+          summary: this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'),
+          geomagnetic: this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC),
+          road_condition:
+            $(Wildcard.ONEDAY_ROADS).length > 0
+              ? this.parseValue<string>($, Wildcard.ONEDAY_ROADS)
+              : new Array(times.length).fill('unknown'),
+          pollen_birch:
+            $(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0
+              ? this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH)
+              : new Array(times.length).fill(0),
+          pollen_grass:
+            $(Wildcard.ONEDAY_POLLEN_GRASS).length > 0
+              ? this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS)
+              : new Array(times.length).fill(0),
+          pollen_ragweed:
+            $(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0
+              ? this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED)
+              : new Array(times.length).fill(0),
+        })
 
         return out as T[]
       })
@@ -252,39 +246,36 @@ export class Gismeteo {
       .get(`${this._base_url}${city_uri}${Endpoint.TENDAYS}`, this._axios_config)
       .then(({ data }) => {
         const $ = load(this.prepareHtml(data))
-        let out: Partial<GismeteoTenDays>[] = []
+        const times = this.parseDatesFromDaytime($, Wildcard.TENDAYS_TIME)
 
-        out = this.parseDatesFromDaytime<Partial<GismeteoTenDays>>($, Wildcard.TENDAYS_TIME)
-        out = this.mergeArray(out, 'temp', this.parseValue<number>($, Wildcard.ONEDAY_TEMP))
-        out = this.mergeArray(out, 'pressure', this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE))
-        out = this.mergeArray(out, 'wind_speed', this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED))
-        out = this.mergeArray(out, 'wind_gust', this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST))
-        out = this.mergeArray(out, 'wind_dir', this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR))
-        out = this.mergeArray(out, 'precipitation', this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION))
-        out = this.mergeArray(out, 'humidity', this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY))
-        out = this.mergeArray(out, 'summary', this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'))
-        out = this.mergeArray(out, 'geomagnetic', this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC))
-
-        if ($(Wildcard.ONEDAY_ROADS).length > 0) {
-          out = this.mergeArray(out, 'road_condition', this.parseValue<string>($, Wildcard.ONEDAY_ROADS))
-        } else {
-          out = this.mergeArray(out, 'road_condition', new Array(out.length).fill('unknown'))
-        }
-        if ($(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0) {
-          out = this.mergeArray(out, 'pollen_birch', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH))
-        } else {
-          out = this.mergeArray(out, 'pollen_birch', new Array(out.length).fill(0))
-        }
-        if ($(Wildcard.ONEDAY_POLLEN_GRASS).length > 0) {
-          out = this.mergeArray(out, 'pollen_grass', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS))
-        } else {
-          out = this.mergeArray(out, 'pollen_grass', new Array(out.length).fill(0))
-        }
-        if ($(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0) {
-          out = this.mergeArray(out, 'pollen_ragweed', this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED))
-        } else {
-          out = this.mergeArray(out, 'pollen_ragweed', new Array(out.length).fill(0))
-        }
+        const out = this.makeCollection<GismeteoTenDays>({
+          dt: times,
+          temp: this.parseValue<number>($, Wildcard.ONEDAY_TEMP),
+          pressure: this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE),
+          wind_speed: this.parseValue<number>($, Wildcard.ONEDAY_WINDSPEED),
+          wind_gust: this.parseValue<number>($, Wildcard.ONEDAY_WINDGUST),
+          wind_dir: this.parseValue<string>($, Wildcard.ONEDAY_WINDDIR),
+          precipitation: this.parseValue<number>($, Wildcard.ONEDAY_PRECIPITATION),
+          humidity: this.parseValue<number>($, Wildcard.ONEDAY_HUMIDITY),
+          summary: this.parseAttr<string>($, Wildcard.ONEDAY_SUMMARY, 'data-text'),
+          geomagnetic: this.parseValue<number>($, Wildcard.ONEDAY_GEOMAGNETIC),
+          road_condition:
+            $(Wildcard.ONEDAY_ROADS).length > 0
+              ? this.parseValue<string>($, Wildcard.ONEDAY_ROADS)
+              : new Array(times.length).fill('unknown'),
+          pollen_birch:
+            $(Wildcard.ONEDAY_POLLEN_BIRCH).length > 0
+              ? this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_BIRCH)
+              : new Array(times.length).fill(0),
+          pollen_grass:
+            $(Wildcard.ONEDAY_POLLEN_GRASS).length > 0
+              ? this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_GRASS)
+              : new Array(times.length).fill(0),
+          pollen_ragweed:
+            $(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0
+              ? this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED)
+              : new Array(times.length).fill(0),
+        })
 
         out.forEach((item, index) => {
           if (item.geomagnetic === undefined) {
@@ -292,7 +283,7 @@ export class Gismeteo {
           }
         })
 
-        return out as GismeteoTenDays[]
+        return out
       })
       .catch((err) => {
         if (err instanceof GismeteoCityError) {
@@ -336,37 +327,36 @@ export class Gismeteo {
       })
   }
 
-  private parseDates<T>($: CheerioAPI, wildcard: Wildcard): T[] {
-    const search = $(wildcard)
-    const start_date = moment(search.first().text() + moment().format('YYYY'), 'DD MMMYYYY', 'ru')
-    const out: T[] = []
-
-    for (let i = 0; i < search.length; i++) {
-      out.push({ dt: start_date.add(i > 0 ? 1 : 0, 'day').unix() } as unknown as T)
-    }
-
-    return out
-  }
-
-  private parseDtFromStringArray<T>(input: string[]): T[] {
-    const out: T[] = []
-
+  private parseDtFromStringArray(input: string[]): number[] {
+    const out: number[] = []
     for (let i = 0; i < input.length; i++) {
       const strip_date = input[i].split(', UTC: ')[1] ? input[i].split(', UTC: ')[1] : input[i].split('от: ')[1].replace(' (UTC)', '')
 
-      out.push({ dt: moment(strip_date, 'YYYY-MM-DD HH:mm:ss').unix() } as unknown as T)
+      out.push(moment(strip_date, 'YYYY-MM-DD HH:mm:ss').unix())
     }
 
     return out
   }
 
-  private parseDatesFromDaytime<T>($: CheerioAPI, wildcard: Wildcard): T[] {
+  private parseDates($: CheerioAPI, wildcard: Wildcard): number[] {
+    const search = $(wildcard)
+    const start_date = moment(search.first().text() + moment().format('YYYY'), 'DD MMMYYYY', 'ru')
+    const out: number[] = []
+
+    for (let i = 0; i < search.length; i++) {
+      out.push(start_date.add(i > 0 ? 1 : 0, 'day').unix())
+    }
+
+    return out
+  }
+
+  private parseDatesFromDaytime($: CheerioAPI, wildcard: Wildcard): number[] {
     const search = $(wildcard)
     const start_date = moment(search.first().text().trim().split(', ')[1] + moment().format('YYYY'), 'DD MMMYYYY', 'ru')
-    const out: T[] = []
+    const out: number[] = []
 
     for (let i = 0; i < search.length * 4; i++) {
-      out.push({ dt: start_date.add(i > 0 ? 6 : 0, 'hour').unix() } as unknown as T)
+      out.push(start_date.add(i > 0 ? 6 : 0, 'hour').unix())
     }
 
     return out
@@ -396,18 +386,26 @@ export class Gismeteo {
     return out
   }
 
+  private makeCollection<T>(data: Record<keyof T, Partial<T[keyof T]>[]>): T[] {
+    const out: T[] = []
+    const length = data[Object.keys(data)[0] as keyof typeof data].length
+
+    for (let k = 0; k < length; k++) {
+      const item: Partial<T> = {}
+      for (const key in data) {
+        item[key as keyof typeof item] = data[key as keyof typeof data][k] as T[keyof T]
+      }
+      out.push(item as T)
+    }
+
+    return out
+  }
+
   private unitToWildcard(wildcard: Wildcard): string {
     return String(wildcard)
       .replace('UNIT_TEMP', this._unit.temp)
       .replace('UNIT_PRESSURE', this._unit.pressure)
       .replace('UNIT_WIND', this._unit.wind)
-  }
-
-  private mergeArray<T, K extends keyof T, V extends T[K]>(input: T[], key: K, values: V[]): T[] {
-    return input.map((item, index) => {
-      item[key] = values[index]
-      return item
-    })
   }
 
   private numberify(value: string | number): number {

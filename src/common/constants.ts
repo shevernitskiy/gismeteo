@@ -29,7 +29,7 @@ export enum Wildcard {
   TWOWEEKS_WINDGUST = 'div[data-stat-value*="wind"] div.widget-row-wind-gust div.row-item span.UNIT_WIND',
   TWOWEEKS_WINDDIR = 'div[data-stat-value*="wind"] div.widget-row-wind-direction div.row-item div.direction',
   TWOWEEKS_PRECIPITATION = 'div[data-stat-value*="weather"] div.widget-row-precipitation-bars div.row-item div.item-unit',
-  TWOWEEKS_HUMIDITY = 'div[data-stat-value*="humidity"] div.widget-items div.row-item',
+  TWOWEEKS_HUMIDITY = 'div[data-stat-value*="humidity"] div.widget-row-humidity div.row-item',
   TWOWEEKS_ROADS = 'div[data-stat-value*="roadcondition"] div.row-item div.item-description',
   TWOWEEKS_GEOMAGNETIC = 'div[data-stat-value*="geomagnetic"] div.row-item div.item',
   TWOWEEKS_POLLEN_BIRCH = 'div[data-stat-value*="pollen"] div.widget-row-pollen-birch-point div.row-item div.item',
@@ -62,7 +62,7 @@ export enum Wildcard {
   ONEDAY_POLLEN_RAGWEED = 'div[data-stat-value*="pollen"] div.widget-row-pollen-ragweed div.row-item div.item',
   ONEDAY_ROADS = 'div[data-stat-value*="roadcondition"] div.row-item div.item-description',
   ONEDAY_PRESSURE = 'div[data-stat-value*="pressure"] div.widget-row-chart-pressure div.value span.UNIT_PRESSURE',
-  ONEDAY_HUMIDITY = 'div[data-stat-value*="humidity"] div.widget-items div.row-item',
+  ONEDAY_HUMIDITY = 'div[data-stat-value*="humidity"] div.widget-row-humidity div.row-item',
   ONEDAY_GEOMAGNETIC = 'div[data-stat-value*="geomagnetic"] div.row-item div.item',
   TENDAYS_TIME = 'div[data-stat-value*="weather"] div.widget-date-wrap a.item',
 }
