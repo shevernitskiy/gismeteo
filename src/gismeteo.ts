@@ -6,7 +6,17 @@ import is_number from 'is-number'
 
 import { Endpoint, Unit, Wildcard } from './common/constants'
 import { GismeteoCityError, GismeteoConnectionError } from './common/errors'
-import { CityUri, GismeteoMonth, GismeteoNow, GismeteoOptions, GismeteoTwoWeeks, GismeteoOneDay, GismeteoTenDays } from './common/types'
+import {
+  CityUri,
+  GismeteoMonth,
+  GismeteoNow,
+  GismeteoOptions,
+  GismeteoTwoWeeks,
+  GismeteoOneDay,
+  GismeteoToday,
+  GismeteoTomorrow,
+  GismeteoTenDays,
+} from './common/types'
 
 export class Gismeteo {
   private _base_url: Endpoint
@@ -168,10 +178,10 @@ export class Gismeteo {
    * @param {string} city - the name of the city you want to get the weather for
    * @returns An array of GismeteoTomorrow
    */
-  public async getTomorrow<GismeteoTomorrow>(city: string): Promise<GismeteoTomorrow[]> {
+  public async getTomorrow(city: string): Promise<GismeteoTomorrow[]> {
     const city_uri = await this.getCityUri(city)
 
-    return this.getOneDay(`${this._base_url}${city_uri}${Endpoint.TOMMOROW}`)
+    return this.getOneDay<GismeteoTomorrow>(`${this._base_url}${city_uri}${Endpoint.TOMMOROW}`)
   }
 
   /**
@@ -180,10 +190,10 @@ export class Gismeteo {
    * @param {string} city - the name of the city you want to get the weather for
    * @returns An array of GismeteoToday
    */
-  public async getToday<GismeteoToday>(city: string): Promise<GismeteoToday[]> {
+  public async getToday(city: string): Promise<GismeteoToday[]> {
     const city_uri = await this.getCityUri(city)
 
-    return this.getOneDay(`${this._base_url}${city_uri}`)
+    return this.getOneDay<GismeteoToday>(`${this._base_url}${city_uri}`)
   }
 
   private async getOneDay<T>(url: string): Promise<T[]> {
