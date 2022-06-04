@@ -50,24 +50,24 @@ jobs:
             **/*.js
 
       - name: Use Node ${{ matrix.node }}
-        if: steps.changed-files.outputs.only_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
 
       - name: Install deps and build (with cache)
-        if: steps.changed-files.outputs.only_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: yarn
 
       - name: Lint
-        if: steps.changed-files.outputs.only_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: yarn lint
 
       - name: Test
-        if: steps.changed-files.outputs.only_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: yarn test --ci --maxWorkers=2
 
       - name: Build
-        if: steps.changed-files.outputs.only_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: yarn build

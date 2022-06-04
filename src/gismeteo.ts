@@ -177,7 +177,7 @@ export class Gismeteo {
   /**
    * It takes a city name, then makes a request to the Gismeteo, parses the
    * HTML, and returns an array of GismeteoToday with the weather data
-   * @param {string} city - string - the name of the city you want to get the weather for
+   * @param {string} city - the name of the city you want to get the weather for
    * @returns An array of GismeteoToday
    */
   public async getToday<GismeteoToday>(city: string): Promise<GismeteoToday[]> {
