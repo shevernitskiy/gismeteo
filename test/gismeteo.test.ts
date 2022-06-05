@@ -68,8 +68,9 @@ describe('Gismeteo', () => {
       result = await gismeteo.getTenDays('Moscow')
     })
 
-    test('should contain 40 items', () => {
-      expect(result.length).toBe(40)
+    test('should contain 12 or 40 items', () => {
+      expect(result.length).toBeGreaterThanOrEqual(12)
+      expect(result.length).toBeLessThanOrEqual(40)
     })
 
     test('should not contain any undefined values', () => {
