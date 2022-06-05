@@ -1,10 +1,17 @@
 import { Gismeteo } from '../src/gismeteo'
 import { GismeteoTomorrow, GismeteoTwoWeeks, GismeteoMonth, GismeteoNow, GismeteoToday, GismeteoTenDays } from '../src/common/types'
+import { GismeteoCityError } from '../src/common/errors'
 
 jest.setTimeout(15000)
 
 describe('Gismeteo', () => {
   const gismeteo = new Gismeteo()
+
+  describe('Error', () => {
+    test('should return GismeteoCityError', async () => {
+      await expect(gismeteo.getNow('wegiubweiv')).rejects.toBeInstanceOf(GismeteoCityError)
+    })
+  })
 
   describe('getNow', () => {
     let result: GismeteoNow

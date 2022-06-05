@@ -59,7 +59,7 @@ export class Gismeteo {
         const $ = load(this.prepareHtml(data))
         const times = this.parseDates($, Wildcard.TWOWEEKS_DATE)
 
-        const out = this.makeCollection<GismeteoTwoWeeks>({
+        return this.makeCollection<GismeteoTwoWeeks>({
           dt: times,
           tmax: this.parseValue<number>($, Wildcard.TWOWEEKS_TMAX),
           tmin: this.parseValue<number>($, Wildcard.TWOWEEKS_TMIN),
@@ -89,16 +89,8 @@ export class Gismeteo {
               ? this.parseValue<number>($, Wildcard.TWOWEEKS_POLLEN_RAGWEED)
               : new Array(times.length).fill(0),
         })
-
-        return out
       })
-      .catch((err) => {
-        if (err instanceof GismeteoCityError) {
-          throw err
-        } else {
-          throw new GismeteoConnectionError(err)
-        }
-      })
+      .catch((err) => this.errorHandler(err))
   }
 
   /**
@@ -116,21 +108,13 @@ export class Gismeteo {
       .then(({ data }) => {
         const $ = load(this.prepareHtml(data))
 
-        const out = this.makeCollection<GismeteoMonth>({
+        return this.makeCollection<GismeteoMonth>({
           dt: this.parseDates($, Wildcard.MONTH_DATE),
           tmax: this.parseValue<number>($, Wildcard.MONTH_TMAX),
           tmin: this.parseValue<number>($, Wildcard.MONTH_TMIN),
         })
-
-        return out
       })
-      .catch((err) => {
-        if (err instanceof GismeteoCityError) {
-          throw err
-        } else {
-          throw new GismeteoConnectionError(err)
-        }
-      })
+      .catch((err) => this.errorHandler(err))
   }
 
   /**
@@ -146,7 +130,7 @@ export class Gismeteo {
       .then(({ data }) => {
         const $ = load(this.prepareHtml(data))
 
-        const out: GismeteoNow = {
+        return {
           temp: this.numberify($(this.unitToWildcard(Wildcard.NOW_TEMP)).text()),
           temp_feels: this.numberify($(this.unitToWildcard(Wildcard.NOW_TEMPFEELS)).text()),
           wind_speed: this.numberify(this.parentText($, Wildcard.NOW_WINDSPEED)),
@@ -159,17 +143,9 @@ export class Gismeteo {
           sunrise: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNRISE).text(), 'DD MMM YYYY H:mm').unix(),
           sunset: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNSET).text(), 'DD MMM YYYY H:mm').unix(),
           image: $(Wildcard.NOW_IMAGE).attr('style')?.replace("background-image: url('", '').replace("')", ''),
-        }
-
-        return out
+        } as GismeteoNow
       })
-      .catch((err) => {
-        if (err instanceof GismeteoCityError) {
-          throw err
-        } else {
-          throw new GismeteoConnectionError(err)
-        }
-      })
+      .catch((err) => this.errorHandler(err))
   }
 
   /**
@@ -203,7 +179,7 @@ export class Gismeteo {
         const $ = load(this.prepareHtml(data))
         const times = this.parseAttr<string>($, Wildcard.ONEDAY_TIME, 'title')
 
-        const out = this.makeCollection<Partial<GismeteoOneDay>>({
+        return this.makeCollection<Partial<GismeteoOneDay>>({
           dt: this.parseDtFromStringArray(times),
           temp: this.parseValue<number>($, Wildcard.ONEDAY_TEMP),
           pressure: this.parseValue<number>($, Wildcard.ONEDAY_PRESSURE),
@@ -230,17 +206,9 @@ export class Gismeteo {
             $(Wildcard.ONEDAY_POLLEN_RAGWEED).length > 0
               ? this.parseValue<number>($, Wildcard.ONEDAY_POLLEN_RAGWEED)
               : new Array(times.length).fill(0),
-        })
-
-        return out as T[]
+        }) as T[]
       })
-      .catch((err) => {
-        if (err instanceof GismeteoCityError) {
-          throw err
-        } else {
-          throw new GismeteoConnectionError(err)
-        }
-      })
+      .catch((err) => this.errorHandler(err))
   }
 
   /**
@@ -295,13 +263,7 @@ export class Gismeteo {
 
         return out
       })
-      .catch((err) => {
-        if (err instanceof GismeteoCityError) {
-          throw err
-        } else {
-          throw new GismeteoConnectionError(err)
-        }
-      })
+      .catch((err) => this.errorHandler(err))
   }
 
   /**
@@ -320,7 +282,7 @@ export class Gismeteo {
       .get(`${Endpoint.SEARCH}${encodeURIComponent(city)}/9/`, this._axios_config)
       .then(({ data }) => {
         if (data.data.length === 0 || data.data[0]?.url === undefined) {
-          throw new GismeteoCityError('Unable to find uri for given city name')
+          throw new GismeteoCityError(`Unable to find uri city ${city}`)
         }
         this._city_cache = {
           city: city,
@@ -328,13 +290,16 @@ export class Gismeteo {
         }
         return data.data[0].url
       })
-      .catch((err) => {
-        if (err instanceof GismeteoCityError) {
-          throw err
-        } else {
-          throw new GismeteoConnectionError(err)
-        }
-      })
+      .catch((err) => this.errorHandler(err))
+  }
+
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  private errorHandler(err: any): never {
+    if (err instanceof GismeteoCityError) {
+      throw err
+    } else {
+      throw new GismeteoConnectionError(err)
+    }
   }
 
   private parseDates($: CheerioAPI, wildcard: Wildcard): number[] {
@@ -351,9 +316,9 @@ export class Gismeteo {
 
   private parseDtFromStringArray(input: string[]): number[] {
     const out: number[] = []
+
     for (let i = 0; i < input.length; i++) {
       const strip_date = input[i].split(', UTC: ')[1] ? input[i].split(', UTC: ')[1] : input[i].split('от: ')[1].replace(' (UTC)', '')
-
       out.push(moment(strip_date, 'YYYY-MM-DD HH:mm:ss').unix())
     }
 

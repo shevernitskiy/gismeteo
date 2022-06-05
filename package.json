@@ -53,6 +53,7 @@
     "eslint": "~8.16",
     "eslint-config-prettier": "~8.5",
     "eslint-plugin-jest": "~26.4",
+    "eslint-plugin-sonarjs": "^0.13.0",
     "jest": "^28.1.0",
     "rimraf": "3.0.2",
     "rollup": "^2.75.0",
