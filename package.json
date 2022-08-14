@@ -1,6 +1,6 @@
 {
   "name": "gismeteo",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "lib/gismeteo.js",
   "typings": "lib/gismeteo.d.ts",
   "module": "lib/gismeteo.esm.js",
