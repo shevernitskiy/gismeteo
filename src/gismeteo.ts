@@ -304,7 +304,7 @@ export class Gismeteo {
 
   private parseDates($: CheerioAPI, wildcard: Wildcard): number[] {
     const search = $(wildcard)
-    const start_date = moment(search.first().text() + moment().format('YYYY'), 'DD MMMYYYY', 'ru')
+    const start_date = moment(search.first().text().split('\n').join('').split(' ').join('') + moment().format('YYYY'), 'DDMMMYYYY', 'ru')
     const out: number[] = []
 
     for (let i = 0; i < search.length; i++) {
@@ -342,7 +342,9 @@ export class Gismeteo {
     const search = $(this.unitToWildcard(wildcard))
 
     search.each((i, el) => {
-      out[i] = (is_number(load(el).text().replace(',', '.')) ? this.numberify(load(el).text()) : load(el).text()) as unknown as T
+      out[i] = (is_number(load(el).text().replace(',', '.'))
+        ? this.numberify(load(el).text())
+        : load(el).text().split('\n').join('').trim()) as unknown as T
     })
 
     return out
