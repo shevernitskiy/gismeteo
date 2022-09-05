@@ -137,7 +137,7 @@ export class Gismeteo {
           wind_dir: $(this.unitToWildcard(Wildcard.NOW_WINDDIR)).last().text(),
           pressure: this.numberify(this.parentText($, Wildcard.NOW_PRESSURE)),
           humidity: this.numberify($(Wildcard.NOW_HUMIDITY).text()),
-          summary: $(Wildcard.NOW_SUMMARY).text(),
+          summary: $(Wildcard.NOW_SUMMARY).text().split('\n').join('').trim(),
           geomagnetic: this.numberify($(Wildcard.NOW_GEOMAGNETIC).text()),
           water_temp: this.numberify($(this.unitToWildcard(Wildcard.NOW_WATER)).text()),
           sunrise: moment(moment().format('DD MMM YYYY') + ' ' + $(Wildcard.NOW_SUNRISE).text(), 'DD MMM YYYY H:mm').unix(),
