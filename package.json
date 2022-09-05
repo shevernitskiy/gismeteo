@@ -37,11 +37,11 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "cheerio": "^1.0.0-rc.11",
+    "cheerio": "^1.0.0-rc.12",
     "is-number": "^7.0.0",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "tslib": "~2.4.0",
-    "user-agents": "^1.0.1027"
+    "user-agents": "^1.0.1125"
   },
   "devDependencies": {
     "@types/is-number": "^7.0.3",
@@ -50,15 +50,15 @@
     "@types/user-agents": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "~5.30",
     "@typescript-eslint/parser": "~5.30",
-    "eslint": "~8.18",
+    "eslint": "~8.23",
     "eslint-config-prettier": "~8.5",
-    "eslint-plugin-jest": "~26.5",
+    "eslint-plugin-jest": "~27.0",
     "eslint-plugin-sonarjs": "^0.13.0",
     "jest": "^28.1.0",
     "rimraf": "3.0.2",
     "rollup": "^2.75.7",
     "rollup-plugin-typescript2": "^0.32.1",
-    "ts-jest": "^28.0.3",
-    "typescript": "^4.7.2"
+    "ts-jest": "^28.0.8",
+    "typescript": "^4.8.2"
   }
 }
