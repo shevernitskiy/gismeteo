@@ -48,7 +48,7 @@
     "@types/jest": "~28.1",
     "@types/node": "~18.0",
     "@types/user-agents": "^1.0.2",
-    "@typescript-eslint/eslint-plugin": "~5.30",
+    "@typescript-eslint/eslint-plugin": "~5.47",
     "@typescript-eslint/parser": "~5.30",
     "eslint": "~8.23",
     "eslint-config-prettier": "~8.5",
