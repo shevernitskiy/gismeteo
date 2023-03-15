@@ -2,7 +2,7 @@
 
 # Gismeteo weather (unofficial)
 
-<img src="https://androidprogrammi.ru/wp-content/uploads/2021/02/gismeteo_gismeteo.png" width="200">
+<img src="https://storage.myseldon.com/yugo/B2AF274BB64B9F1CB9FFB7290D9A08A6.png" width="200">
 
 </div>
 
